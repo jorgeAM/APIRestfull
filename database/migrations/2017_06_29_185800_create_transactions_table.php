@@ -15,6 +15,14 @@ class CreateTransactionsTable extends Migration
     {
         Schema::create('transactions', function (Blueprint $table) {
             $table->increments('id');
+            #atributos agregados por nosotros
+            $table->integer('quantity')->unsigned();
+            #relaciones
+            $table->integer('buyer_id')->unsigned();
+            $table->integer('product_id')->unsigned();
+            $table->foreign('buyer_id')->references('id')->on('users');
+            $table->foreign('product_id')->references('id')->on('products');
+
             $table->timestamps();
         });
     }
