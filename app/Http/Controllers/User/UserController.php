@@ -67,7 +67,37 @@ class UserController extends Controller
      */
     public function update(Request $request, $id)
     {
-        //
+        $usuario = User::findOrFail($id);
+        #validación
+        $this->validate($request, [
+            'email' => 'email|unique:users,email,'.$usuario->id,
+            'password' => 'min:6|confirmed',
+            'admin' => 'in:'.User::USUARIO_ADMINISTRADOR.','.User::USUARIO_NO_ADMINISTRADOR
+        ]);
+        #actualizar lo que se tenga
+        if($request->has('name')){
+            $usuario->name = $request->name;
+        }
+        if($request->has('email') && $usuario->email != $request->email){
+            $usuario->verified = User::USUARIO_NO_VERIFICADO;
+            $usuario->verification_token = User::generarVerificationToken();
+            $usuario->email = $request->email;
+        }
+        if($request->has('password')){
+            $usuario->password = bcrypt($request->password);
+        }
+        if($request->has('admin')){
+            if(!$usuario->esVerificado()){
+                return response()->json(['error' => 'Solo usuarios verificados pueden hacer esto! Crrano', 'code' => 409], 409);
+            }
+            $usuario->admin = $request->admin;
+        }
+        if(!$usuario->isDirty()){
+            return response()->json(['error' => 'Se debe actualizar al menos 1 valor! Crrano', 'code' => 422], 422);
+        }
+        #guardamos
+        $usuario->save();
+        return response()->json(['data' => $usuario], 200);
     }
 
     /**
