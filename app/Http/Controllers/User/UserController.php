@@ -17,7 +17,7 @@ class UserController extends Controller
     {
         #llamamos a todos los users
         $usuarios = User::all();
-        return response()->json(['data' => $usuarios]);
+        return response()->json(['data' => $usuarios], 200);
     }
 
     /**
@@ -27,8 +27,22 @@ class UserController extends Controller
      * @return \Illuminate\Http\Response
      */
     public function store(Request $request)
-    {
-        //
+    {   
+        #validación
+        $this->validate($request, [
+            'name' => 'required',
+            'email' => 'required|email|unique:users',
+            'password' => 'required|min:6|confirmed'
+        ]);
+        #valores sin necesidad de agregarlos
+        $campos = $request->all();
+        $campos['password'] = bcrypt($request->password);
+        $campos['verified'] = User::USUARIO_NO_VERIFICADO;
+        $campos['verification_token'] = User::generarVerificationToken();
+        $campos['admin'] = User::USUARIO_NO_ADMINISTRADOR;
+        #creamos un nuevo usuario
+        $usuario = User::create($campos);
+        return response()->json(['data'=>$usuario], 201);
     }
 
     /**
@@ -41,7 +55,7 @@ class UserController extends Controller
     {
         #llamamos al usuario
         $usuario = User::findOrFail($id);
-        return response()->json(['data' => $usuario]);
+        return response()->json(['data' => $usuario], 200);
     }
 
     /**
