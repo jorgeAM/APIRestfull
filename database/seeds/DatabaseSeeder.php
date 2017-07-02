@@ -25,7 +25,7 @@ class DatabaseSeeder extends Seeder
     	Transaction::truncate();
     	DB::table('category_product')->truncate();
 
-    	factory(User::class, 200)->create();
+    	factory(User::class, 1000)->create();
     	factory(Category::class, 30)->create();
 
     	#relacion muchos a muchos
