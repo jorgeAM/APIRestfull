@@ -91,12 +91,14 @@ class UserController extends ApiController
         }
         if($request->has('admin')){
             if(!$usuario->esVerificado()){
-                return response()->json(['error' => 'Solo usuarios verificados pueden hacer esto! Crrano', 'code' => 409], 409);
+                return $this->errorResponse('Solo usuarios verificados pueden hacer esto! Crrano', 409);
+                #return response()->json(['error' => 'Solo usuarios verificados pueden hacer esto! Crrano', 'code' => 409], 409);
             }
             $usuario->admin = $request->admin;
         }
         if(!$usuario->isDirty()){
-            return response()->json(['error' => 'Se debe actualizar al menos 1 valor! Crrano', 'code' => 422], 422);
+            return $this->errorResponse('Se debe actualizar al menos 1 valor! Crrano', 422);
+            #return response()->json(['error' => 'Se debe actualizar al menos 1 valor! Crrano', 'code' => 422], 422);
         }
         #guardamos
         $usuario->save();
