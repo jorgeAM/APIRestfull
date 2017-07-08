@@ -5,6 +5,7 @@ namespace App\Exceptions;
 use Exception;
 use App\Traits\ApiResponser;
 use Illuminate\Auth\AuthenticationException;
+use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Validation\ValidationException;
 use Illuminate\Foundation\Exceptions\Handler as ExceptionHandler;
 
@@ -51,6 +52,12 @@ class Handler extends ExceptionHandler
         if($exception instanceof ValidationException) {
             return $this->convertValidationExceptionToResponse($exception, $request);
         }
+        if($exception instanceof ModelNotFoundException){
+            return $this->errorResponse('No se encontro dato, escribe bien Crrano!!', 404);
+        }
+        if($exception instanceof AuthenticationException){
+            return $this->unauthenticated($request, $e);
+        }
         return parent::render($request, $exception);
     }
 
@@ -63,14 +70,10 @@ class Handler extends ExceptionHandler
      */
     protected function unauthenticated($request, AuthenticationException $exception)
     {
-        if ($request->expectsJson()) {
-            return response()->json(['error' => 'Unauthenticated.'], 401);
-        }
-
-        return redirect()->guest(route('login'));
+        return $this->errorResponse('No estas autenticado', 401);
     }
 
-    #metodo para que devuelva un JSON
+    #metodo para que devuelva un JSON -> use Illuminate\Foundation\Exceptions\Handler
     protected function convertValidationExceptionToResponse(ValidationException $e, $request)
     {
         $errors = $e->validator->errors()->getMessages();
