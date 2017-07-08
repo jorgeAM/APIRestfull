@@ -17,7 +17,8 @@ class UserController extends ApiController
     {
         #llamamos a todos los users
         $usuarios = User::all();
-        return response()->json(['data' => $usuarios], 200);
+        return $this->showAll($usuarios);
+        #return response()->json(['data' => $usuarios], 200);
     }
 
     /**
@@ -42,7 +43,8 @@ class UserController extends ApiController
         $campos['admin'] = User::USUARIO_NO_ADMINISTRADOR;
         #creamos un nuevo usuario
         $usuario = User::create($campos);
-        return response()->json(['data'=>$usuario], 201);
+        return $this->showOne($usuario, 201);
+        #return response()->json(['data'=>$usuario], 201);
     }
 
     /**
@@ -55,7 +57,8 @@ class UserController extends ApiController
     {
         #llamamos al usuario
         $usuario = User::findOrFail($id);
-        return response()->json(['data' => $usuario], 200);
+        return $this->showOne($usuario);
+        #return response()->json(['data' => $usuario], 200);
     }
 
     /**
@@ -97,7 +100,8 @@ class UserController extends ApiController
         }
         #guardamos
         $usuario->save();
-        return response()->json(['data' => $usuario], 200);
+        return $this->showOne($usuario);
+        #return response()->json(['data' => $usuario], 200);
     }
 
     /**
@@ -110,6 +114,7 @@ class UserController extends ApiController
     {
         $usuario = User::findOrFail($id);
         $usuario->delete();
-        return response()->json(['data' => $usuario], 200);
+        return $this->showOne($usuario);
+        #return response()->json(['data' => $usuario], 200);
     }
 }
