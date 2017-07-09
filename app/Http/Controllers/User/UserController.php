@@ -53,11 +53,11 @@ class UserController extends ApiController
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function show($id)
+    public function show(User $user)
     {
         #llamamos al usuario
-        $usuario = User::findOrFail($id);
-        return $this->showOne($usuario);
+        #$usuario = User::findOrFail($id);
+        return $this->showOne($user);
         #return response()->json(['data' => $usuario], 200);
     }
 
@@ -112,11 +112,11 @@ class UserController extends ApiController
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function destroy($id)
+    public function destroy(User $user)
     {
-        $usuario = User::findOrFail($id);
-        $usuario->delete();
-        return $this->showOne($usuario);
+        #$usuario = User::findOrFail($id);
+        $user->delete();
+        return $this->showOne($user);
         #return response()->json(['data' => $usuario], 200);
     }
 }
