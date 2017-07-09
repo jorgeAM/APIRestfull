@@ -19,6 +19,8 @@ use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Component\HttpKernel\Exception\HttpException;
 #Elegimos mal el método
 use Symfony \ Component \ HttpKernel \ Exception \ MethodNotAllowedHttpException;
+#Excepcion al querer eliminar registro
+use Illuminate\Database\QueryException;
 use Illuminate\Foundation\Exceptions\Handler as ExceptionHandler;
 
 class Handler extends ExceptionHandler
@@ -82,8 +84,16 @@ class Handler extends ExceptionHandler
         if($exception instanceof HttpException){
             return $this->errorResponse($exception->getMessage(), $exception->getStatusCode());
         }
-
-        return parent::render($request, $exception);
+        if($exception instanceof QueryException){
+            $codigo = $exception->errorInfo[1];
+            if($codigo == 1451){
+                return $this->errorResponse('No puedes borrar el registro por que esta relacionado con otro, crrano!', 409);
+            }
+        }
+        if(config('app.debug')){
+            return parent::render($request, $exception);
+        }
+        return $this->errorResponse('agg tmr cerrano, algo paso.', 500);
     }
 
     /**
