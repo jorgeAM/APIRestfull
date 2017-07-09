@@ -3,12 +3,22 @@
 namespace App\Exceptions;
 
 use Exception;
+#llamamos al trait
 use App\Traits\ApiResponser;
+#Excepcion para autenticación
 use Illuminate\Auth\AuthenticationException;
+#Excepcion para modelo no encontrado
 use Illuminate\Database\Eloquent\ModelNotFoundException;
+#Excepcion para autorizacion
 use Illuminate\Auth\Access\AuthorizationException;
+#Excepcion para validación
 use Illuminate\Validation\ValidationException;
+#Excepcion cuando no encontramos URL
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
+#Excepcion HTTP en general
+use Symfony\Component\HttpKernel\Exception\HttpException;
+#Elegimos mal el método
+use Symfony \ Component \ HttpKernel \ Exception \ MethodNotAllowedHttpException;
 use Illuminate\Foundation\Exceptions\Handler as ExceptionHandler;
 
 class Handler extends ExceptionHandler
@@ -66,6 +76,13 @@ class Handler extends ExceptionHandler
         if($exception instanceof NotFoundHttpException){
             return $this->errorResponse('No se encontro la URL, escribe bien Crrano!', 404);
         }
+        if($exception instanceof MethodNotAllowedHttpException){
+            return $this->errorResponse('Elige bien el método, Crrano!', 405);
+        }
+        if($exception instanceof HttpException){
+            return $this->errorResponse($exception->getMessage(), $exception->getStatusCode());
+        }
+
         return parent::render($request, $exception);
     }
 
