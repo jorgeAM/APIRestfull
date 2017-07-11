@@ -5,9 +5,14 @@ namespace App;
 use App\Buyer;
 use App\Product;
 use Illuminate\Database\Eloquent\Model;
+#para poder usar el soft delete
+use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Transaction extends Model
 {
+  use SoftDeletes;
+  protected $dates = ['deleted_at'];
+  
 	#atributos
 	protected $fillable = [
 		'quantity',

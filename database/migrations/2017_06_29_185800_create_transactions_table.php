@@ -24,6 +24,8 @@ class CreateTransactionsTable extends Migration
             $table->foreign('product_id')->references('id')->on('products');
 
             $table->timestamps();
+            #metodo para el soft deleting
+            $table->softDeletes();
         });
     }
 
