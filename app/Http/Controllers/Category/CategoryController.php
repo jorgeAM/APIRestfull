@@ -39,7 +39,7 @@ class CategoryController extends ApiController
      */
     public function show(Category $category)
     {
-        //
+        return $this->showOne($category);
     }
 
     /**
@@ -62,6 +62,8 @@ class CategoryController extends ApiController
      */
     public function destroy(Category $category)
     {
-        //
+        #borramos registro
+        $category->delete();
+        return $this->showOne($category);
     }
 }
