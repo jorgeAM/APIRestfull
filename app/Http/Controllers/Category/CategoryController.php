@@ -58,7 +58,19 @@ class CategoryController extends ApiController
      */
     public function update(Request $request, Category $category)
     {
-        //
+        #intersect = solo los datos del array
+        $category->fill($request->intersect([
+            'name',
+            'description'
+        ]));
+        #si no se agrego ningun dato nuevo
+        if($category->isClean()){
+            return $this->errorResponse('Debes actualizar por lo menos 1 valor, Crrano!',422);
+        }
+        #guardamos los cambios
+        $category->save();
+        #mostramos los cambios
+        return $this->showOne($category);
     }
 
     /**
