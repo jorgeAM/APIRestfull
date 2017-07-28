@@ -15,6 +15,9 @@ class Category extends Model
   #atributos
   protected $fillable = ['name', 'description'];
 
+  #ocultar el pivot de JSON
+  protected $hidden = ['pivot'];
+
   #relacion *-*
 	public function products(){
   	return $this->belongsToMany(Product::class);

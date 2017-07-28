@@ -27,6 +27,9 @@ class Product extends Model
    	'seller_id'
   ];
 
+  #ocultar pivote de JSON
+  protected $hidden = ['pivot'];
+
   public function estaDisponible(){
   	return $this->status == Product::PRODUCTO_DISPONIBLE;
   }
