@@ -2,7 +2,9 @@
 
 namespace App\Http\Controllers\Seller;
 
+use App\User;
 use App\Seller;
+use App\Product;
 use Illuminate\Http\Request;
 use App\Http\Controllers\ApiController;
 
@@ -25,9 +27,24 @@ class SellerProductController extends ApiController
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function store(Request $request)
+    public function store(Request $request, User $seller)
     {
-        //
+        #validación
+        $this->validate($request, [
+            'name' => 'required',
+            'description' => 'required',
+            'quantity' => 'required|integer|min:1',
+            'image' => 'required|image'
+        ]);
+        #conseguimos todos los datos
+        $data = $request->all();
+        $data['status'] = Product::PRODUCTO_DISPONIBLE;
+        #por ahroa recibiremos esta imagen
+        $data['image'] = '1.jpg';
+        $data['seller_id'] = $seller->id;
+        #creamos producto
+        $product = Product::create($data);
+        return $this->showOne($product, 201);
     }
 
     /**
