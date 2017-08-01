@@ -54,9 +54,36 @@ class SellerProductController extends ApiController
      * @param  \App\Seller  $seller
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, Seller $seller)
+    public function update(Request $request, Seller $seller, Product $product)
     {
-        //
+        #validación        
+        $this->validate($request, [
+            'quantity' => 'integer|min:1',
+            'status' => 'in:'.Product::PRODUCTO_DISPONIBLE.','.Product::PRODUCTO_NO_DISPONIBLE,
+            'image' => 'image'
+        ]);
+        if($seller->id != $product->seller_id){
+            return $this->errorResponse('El vendedor especificado no tiene este producto, Crrano!', 422);
+        }
+        $product->fill($request->intersect([
+          'name',
+          'description',
+          'quantity'
+        ]));
+
+        if($request->has('status')){
+          $product->status = $request->status;
+          if($product->estaDisponible() && $product->categories()->count() == 0){
+            return $this->errorResponse('El producto al menos debe tener un categoria, agg Crrano!'. 409);
+          }
+        }
+
+        if($product->isClean()){
+          return $this->errorResponse('debes cambiar algo, Crrano', 422);
+        }
+
+        $product->save();
+        return $this->showOne($product);
     }
 
     /**
@@ -65,8 +92,12 @@ class SellerProductController extends ApiController
      * @param  \App\Seller  $seller
      * @return \Illuminate\Http\Response
      */
-    public function destroy(Seller $seller)
+    public function destroy(Seller $seller, Product $product)
     {
-        //
+        if($seller->id != $product->seller_id){
+          return $this->errorResponse('El vendedor especificado no tiene este producto, Crrano!', 422);
+        }
+        $product->delete();
+        return $this->showOne($product);
     }
 }
