@@ -40,7 +40,7 @@ class SellerProductController extends ApiController
         #conseguimos todos los datos
         $data = $request->all();
         $data['status'] = Product::PRODUCTO_DISPONIBLE;
-        #por ahroa recibiremos esta imagen
+        #guardamos imagen
         $data['image'] = $request->image->store('');
         $data['seller_id'] = $seller->id;
         #creamos producto
@@ -77,6 +77,13 @@ class SellerProductController extends ApiController
           if($product->estaDisponible() && $product->categories()->count() == 0){
             return $this->errorResponse('El producto al menos debe tener un categoria, agg Crrano!'. 409);
           }
+        }
+        #si tiene un archivo la peticion
+        if($request->hasFile('image')){
+            #borramos la imagen que tenia el producto
+            Storage::delete($product->image);
+            #agregamos la nueva imagen
+            $product->image = $request->image->store('');
         }
 
         if($product->isClean()){
