@@ -7,6 +7,7 @@ use App\Seller;
 use App\Product;
 use Illuminate\Http\Request;
 use App\Http\Controllers\ApiController;
+use Illuminate\Support\Facades\Storage;
 
 class SellerProductController extends ApiController
 {
@@ -97,6 +98,8 @@ class SellerProductController extends ApiController
         if($seller->id != $product->seller_id){
           return $this->errorResponse('El vendedor especificado no tiene este producto, Crrano!', 422);
         }
+        #nos permite interactiar con el sistema de archivos
+        Storage::delete($product->image);
         $product->delete();
         return $this->showOne($product);
     }
