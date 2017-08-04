@@ -40,7 +40,7 @@ class SellerProductController extends ApiController
         $data = $request->all();
         $data['status'] = Product::PRODUCTO_DISPONIBLE;
         #por ahroa recibiremos esta imagen
-        $data['image'] = '1.jpg';
+        $data['image'] = $request->image->store('');
         $data['seller_id'] = $seller->id;
         #creamos producto
         $product = Product::create($data);
