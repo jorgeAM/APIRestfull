@@ -6,6 +6,7 @@ use App\Category;
 use App\Transaction;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Database\Eloquent\Concerns\flushEventListeners;
 
 class DatabaseSeeder extends Seeder
 {
@@ -24,6 +25,13 @@ class DatabaseSeeder extends Seeder
     	Product::truncate();
     	Transaction::truncate();
     	DB::table('category_product')->truncate();
+
+        #para cuando useamos los seeders no envie correos y genere un coste elevado en el proyecto
+        #para que no use eventos de ningun modelo
+        User::flushEventListeners();
+        Category::flushEventListeners();
+        Product::flushEventListeners();
+        Transaction::flushEventListeners();
 
     	factory(User::class, 1000)->create();
     	factory(Category::class, 30)->create();
