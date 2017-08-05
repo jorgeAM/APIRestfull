@@ -119,4 +119,17 @@ class UserController extends ApiController
         return $this->showOne($user);
         #return response()->json(['data' => $usuario], 200);
     }
+
+    #metodo para verificacion de correo
+    public function verify($token){
+      #buscamos usuario por token
+      $user = User::where('verification_token', $token)->firstOrFail();
+      #colocamos como verificado
+      $user->verified = User::USUARIO_VERIFICADO;
+      #anulamos verification_token
+      $user->verification_token = null;
+      #guardamos
+      $user->save();
+      return $this->showMessage('La cuenta fue verificada');
+    }
 }
