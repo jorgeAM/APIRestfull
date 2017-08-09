@@ -22,15 +22,21 @@ class AppServiceProvider extends ServiceProvider
         Schema::defaultStringLength(191);
         #cuando un usuario es creado
         User::created(function($user){
-            #enviamos correo
-            Mail::to($user)->send(new UserCreated($user));
+            #reenviar correos en caso de fallos
+            #5 veces, enviar correo, despues de 100 ms
+            retry(5, function() use ($user){
+                #enviamos correo
+                Mail::to($user)->send(new UserCreated($user));
+            },100);
         });
         #cuando un usuario es actualizado
         User::updated(function($user){
             #asegurarnos que el email haya sido modificado
             if($user->isDirty('email')){
-              #enviamos correo
-              Mail::to($user)->send(new UserMailChanged($user));
+              retry(5,function() use ($user){
+                #enviamos correo
+                Mail::to($user)->send(new UserMailChanged($user));
+              } ,100);
             }
         });
 
