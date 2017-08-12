@@ -2,11 +2,14 @@
 
 namespace App;
 use App\Product;
-#scope de seller
 use App\Scopes\SellerScope;
+use App\Transformers\SellerTransformer;
 
 class Seller extends User
-{
+{	
+	#para relacionarlo con la transformacion
+  	public $transformer = SellerTransformer::class;
+
 	#para usar el BuyerScope
     protected static function boot(){
         parent::boot();
