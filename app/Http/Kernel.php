@@ -37,6 +37,8 @@ class Kernel extends HttpKernel
         ],
 
         'api' => [
+            #usamos middleware -> : para pasar parametros
+            'signature:X-Application-Name',
             'throttle:60,1',
             'bindings',
         ],
@@ -56,5 +58,7 @@ class Kernel extends HttpKernel
         'can' => \Illuminate\Auth\Middleware\Authorize::class,
         'guest' => \App\Http\Middleware\RedirectIfAuthenticated::class,
         'throttle' => \Illuminate\Routing\Middleware\ThrottleRequests::class,
+        #registramos nuestro middleware
+        'signature' => \App\Http\Middleware\SignatureMiddleware::class
     ];
 }
