@@ -21,6 +21,8 @@ trait ApiResponser{
 		}
 		#conseguimos el transformador
 		$transformer = $collection->first()->transformer;
+		#ordenamos
+		$collection = $this->sortData($collection, $transformer);
 		#transformamos
 		$collection = $this->transformData($collection, $transformer);
 		return $this->successResponse($collection, $code);
@@ -39,6 +41,19 @@ trait ApiResponser{
 		return $this->successResponse(['data' => $message], $code);
 	}
 
+	#metodo para ordenar
+	protected function sortData(Collection $collection, $transformer){
+		#
+		if(request()->has('sort_by')){
+			#el metodo es estatico, se llama ::
+			$attribute = $transformer::originalAttribute(request()->sort_by);			
+			#$collection = $collection->sortBy($attribute);
+			$collection = $collection->sortBy->{$attribute};
+		}
+		return $collection;
+	}
+
+	#metodo para transformar
 	protected function transformData($data, $transformer){
 		#transformamos y pasamos a array
 		$transformation = fractal($data, new $transformer)->toArray();

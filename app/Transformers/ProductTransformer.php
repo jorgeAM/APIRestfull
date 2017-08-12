@@ -18,7 +18,7 @@ class ProductTransformer extends TransformerAbstract
             #tranformación(el tipo de dato)
             'identificador' => (int)$product->id,
             'titulo' => (string)$product->name,
-            'detaller' => (string)$product->description,
+            'detalle' => (string)$product->description,
             'disponibles' => (int)$product->quantity,
             'estado' => (string)$product->status,
             #sera un URL
@@ -28,5 +28,21 @@ class ProductTransformer extends TransformerAbstract
             'fechaActualización' => (string)$product->updated_at,
             'fechaEliminación' => isset($product->deleted_at) ? (string)$product->deleted_at : null
         ];
+    }
+
+    public static function originalAttribute($index){
+        $attributes = [
+            'identificador' => 'id',
+            'titulo' => 'name',
+            'detalle' => 'description',
+            'disponibles' => 'quantity',
+            'estado' => 'status',
+            'imagen' => 'image',
+            'vendedor' => 'seller_id',
+            'fechaCreación' => 'created_at',
+            'fechaActualización' => 'updated_at',
+            'fechaEliminación' => 'deleted_at'
+        ];
+        return isset($attributes[$index]) ? $attributes[$index] : null;
     }
 }
