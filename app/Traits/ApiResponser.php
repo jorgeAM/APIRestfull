@@ -17,17 +17,22 @@ trait ApiResponser{
 	protected function showAll(Collection $collection, $code=200){
 		if($collection->isEmpty()){
 			#no transformamos nada, porque no hay nada
-			return $this->successResponse($collection);
+			return $this->successResponse(['data' => $collection, 'code' => 200]);
 		}
 		#conseguimos el transformador
 		$transformer = $collection->first()->transformer;
 		#transformamos
 		$collection = $this->transformData($collection, $transformer);
-		return $this->successResponse(['data' => $collection], $code);
+		return $this->successResponse($collection, $code);
 	}
 
 	protected function showOne(Model $instance, $code=200){
-		return $this->successResponse(['data' => $instance], $code);
+		#sacamos el transformer
+		$transformer = $instance->transformer;
+		#transformamos
+		$instance = $this->transformData($instance, $transformer);
+		#retornamos
+		return $this->successResponse($instance, $code);
 	}
 
 	protected function showMessage($message, $code=200){
