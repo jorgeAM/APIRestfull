@@ -2,6 +2,7 @@
 
 namespace App\Transformers;
 
+use App\Product;
 use League\Fractal\TransformerAbstract;
 
 class ProductTransformer extends TransformerAbstract

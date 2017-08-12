@@ -15,6 +15,14 @@ trait ApiResponser{
 	}
 
 	protected function showAll(Collection $collection, $code=200){
+		if($collection->isEmpty()){
+			#no transformamos nada, porque no hay nada
+			return $this->successResponse($collection);
+		}
+		#conseguimos el transformador
+		$transformer = $collection->first()->transformer;
+		#transformamos
+		$collection = $this->transformData($collection, $transformer);
 		return $this->successResponse(['data' => $collection], $code);
 	}
 
@@ -24,5 +32,12 @@ trait ApiResponser{
 
 	protected function showMessage($message, $code=200){
 		return $this->successResponse(['data' => $message], $code);
+	}
+
+	protected function transformData($data, $transformer){
+		#transformamos y pasamos a array
+		$transformation = fractal($data, new $transformer)->toArray();
+		#retornamos el array
+		return $transformation;
 	}
 }
