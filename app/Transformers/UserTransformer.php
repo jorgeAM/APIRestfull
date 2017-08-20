@@ -25,7 +25,14 @@ class UserTransformer extends TransformerAbstract
             'esAdminitrador' => ($user->admin == 'true'),
             'fechaCreación' => (string)$user->created_at,
             'fechaActualización' => (string)$user->updated_at,
-            'fechaEliminación' => isset($user->deleted_at) ? (string)$user->deleted_at : null
+            'fechaEliminación' => isset($user->deleted_at) ? (string)$user->deleted_at : null,
+            #para hateOS
+            'links' => [
+              [
+                'rel' => 'self',
+                'href' => route('users.show', $user->id)
+              ]
+            ]
         ];
     }
 
