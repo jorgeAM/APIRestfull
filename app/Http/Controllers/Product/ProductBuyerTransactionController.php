@@ -15,7 +15,7 @@ class ProductBuyerTransactionController extends ApiController
     #constructor para usar el middleware TransformInput
     public function __construct(){
       parent::__construct();
-      $this->middleware('transform.input: ' . TransactionTransformer::class)->only(['store']);
+      $this->middleware('transform.input:' . TransactionTransformer::class)->only(['store']);
     }
 
     /**
