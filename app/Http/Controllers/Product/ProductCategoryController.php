@@ -10,6 +10,7 @@ use App\Http\Controllers\ApiController;
 class ProductCategoryController extends ApiController
 {
     public function __construct(){
+      $this->middleware('auth:api')->except('index');
       $this->middleware('client')->only('index');
     }
 

@@ -11,5 +11,7 @@ class ApiController extends Controller
 
     #constructor para usar el middleware TransformInput
     public function __construct(){
+    	#indicar el guard que definimos 
+    	$this->middleware('auth:api');
     }
 }

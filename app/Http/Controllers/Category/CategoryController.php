@@ -12,6 +12,7 @@ class CategoryController extends ApiController
     #constructor para usar el middleware TransformInput
     public function __construct(){
       $this->middleware('client')->only(['index', 'show']);
+      $this->middleware('auth:api')->except(['index', 'show']);
       $this->middleware('transform.input:' . CategoryTransformer::class)->only(['store', 'update']);
     }
     /**

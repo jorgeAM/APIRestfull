@@ -11,7 +11,7 @@ use Illuminate\Support\Facades\Storage;
 use App\Transformers\ProductTransformer;
 
 class SellerProductController extends ApiController
-{   
+{  
     #constructor para usar el middleware TransformInput
     public function __construct(){
       parent::__construct();
