@@ -3,6 +3,8 @@
 namespace App\Http;
 
 use Illuminate\Foundation\Http\Kernel as HttpKernel;
+#middleware de passport
+use Laravel\Passport\Http\Middleware\CheckClientCredentials;
 
 class Kernel extends HttpKernel
 {
@@ -61,5 +63,7 @@ class Kernel extends HttpKernel
         #registramos nuestros middlewares
         'signature' => \App\Http\Middleware\SignatureMiddleware::class,
         'transform.input' => \App\Http\Middleware\TransformInput::class,
+        #registramos middleware de passport
+        'client' => CheckClientCredentials::class,
     ];
 }

@@ -13,7 +13,7 @@ class UserController extends ApiController
 {   
     #constructor para usar el middleware TransformInput
     public function __construct(){
-      parent::__construct();
+      $this->middleware('client')->only(['store', 'resend']);
       $this->middleware('transform.input:' . UserTransformer::class)->only(['store', 'update']);
     }
 
