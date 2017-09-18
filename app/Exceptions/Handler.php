@@ -3,25 +3,17 @@
 namespace App\Exceptions;
 
 use Exception;
-#llamamos al trait
 use App\Traits\ApiResponser;
-#Excepcion para autenticación
-use Illuminate\Auth\AuthenticationException;
-#Excepcion para modelo no encontrado
-use Illuminate\Database\Eloquent\ModelNotFoundException;
-#Excepcion para autorizacion
-use Illuminate\Auth\Access\AuthorizationException;
-#Excepcion para validación
-use Illuminate\Validation\ValidationException;
-#Excepcion cuando no encontramos URL
-use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
-#Excepcion HTTP en general
-use Symfony\Component\HttpKernel\Exception\HttpException;
-#Elegimos mal el método
-use Symfony \ Component \ HttpKernel \ Exception \ MethodNotAllowedHttpException;
-#Excepcion al querer eliminar registro
 use Illuminate\Database\QueryException;
+use Illuminate\Auth\AuthenticationException;
+use Illuminate\Session\TokenMismatchException;
+use Illuminate\Validation\ValidationException;
+use Illuminate\Auth\Access\AuthorizationException;
+use Illuminate\Database\Eloquent\ModelNotFoundException;
+use Symfony\Component\HttpKernel\Exception\HttpException;
 use Illuminate\Foundation\Exceptions\Handler as ExceptionHandler;
+use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
+use Symfony \ Component \ HttpKernel \ Exception \ MethodNotAllowedHttpException;
 
 class Handler extends ExceptionHandler
 {
@@ -70,7 +62,7 @@ class Handler extends ExceptionHandler
             return $this->errorResponse('No se encontro dato, escribe bien Crrano!!', 404);
         }
         if($exception instanceof AuthenticationException){
-            return $this->unauthenticated($request, $e);
+            return $this->unauthenticated($request, $exception);
         }
         if($exception instanceof AuthorizationException){
             return $this->errorResponse('No posees permisos para hacer eso Crrano!', 403);
@@ -90,6 +82,9 @@ class Handler extends ExceptionHandler
                 return $this->errorResponse('No puedes borrar el registro por que esta relacionado con otro, crrano!', 409);
             }
         }
+        if($exception instanceof TokenMismatchException){
+            return redirect()->back()->withInput($request->input());
+        }
         if(config('app.debug')){
             return parent::render($request, $exception);
         }
@@ -105,6 +100,9 @@ class Handler extends ExceptionHandler
      */
     protected function unauthenticated($request, AuthenticationException $exception)
     {
+        if($this->isFrontend($request)){
+            return redirect()->guest('login');
+        }
         return $this->errorResponse('No estas autenticado', 401);
     }
 
@@ -112,7 +110,13 @@ class Handler extends ExceptionHandler
     protected function convertValidationExceptionToResponse(ValidationException $e, $request)
     {
         $errors = $e->validator->errors()->getMessages();
+        if($this->isFrontend($request)){
+            return $request->ajax() ? response()->json($errors, 422) : redirect()->back()->withInput($request->input())->withErrors($errors);
+        }
         return $this->errorResponse($errors, 422);
-        #return response()->json($errors, 422);
+    }
+
+    private function isFrontend($request){
+        return $request->acceptsHtml() && collect($request->route()->middleware())->contains('web');
     }
 }
